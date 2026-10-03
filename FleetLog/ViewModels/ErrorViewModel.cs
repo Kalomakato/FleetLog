@@ -1,4 +1,4 @@
-namespace FleetLog.Models;
+namespace FleetLog.ViewModels;
 
 public class ErrorViewModel
 {

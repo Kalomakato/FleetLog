@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using FleetLog.Models;
+using FleetLog.ViewModels;
+
 
 namespace FleetLog.Controllers;
 

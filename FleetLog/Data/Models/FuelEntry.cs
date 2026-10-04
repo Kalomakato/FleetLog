@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace FleetLog.Data.Models;
 
@@ -14,9 +15,11 @@ public class FuelEntry
     
     public DateTime Date { get; set; }
     
+    [Precision(10, 2)]
     [Range(0.01, 1000)]
     public decimal Litres { get; set; }
     
+    [Precision(10, 2)]
     [Range(typeof(decimal), "0", "100000")]
     public decimal TotalCost { get; set; }
     

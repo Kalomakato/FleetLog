@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace FleetLog.Data.Models;
 
@@ -17,6 +18,7 @@ public class Repair
     [MaxLength(1000)]
     public string Description { get; set; } = string.Empty;
     
+    [Precision(10, 2)]
     [Range(typeof(decimal), "0", "100000")]
     public decimal TotalCost { get; set; }
     

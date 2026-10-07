@@ -1,0 +1,42 @@
+@model IEnumerable<FleetLog.ViewModels.VehicleListViewModel>
+
+@{
+    ViewData["Title"] = "Автомобили";
+    
+}
+
+    <h1>Автомобили</h1>
+    @if (!Model.Any())
+    {
+        <p>Все още няма добавени автомобили.</p>
+    }
+    
+    else
+    {
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Регистрационен номер</th>
+                <th>Марка</th>
+                <th>Модел</th>
+                <th>Година</th>
+                <th>Километраж (км)</th>
+                <th>Статус</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var vehicle in Model)
+            {
+                <tr>
+                    <td>@vehicle.RegistrationNumber</td>
+                    <td>@vehicle.Make</td>
+                    <td>@vehicle.Model</td>
+                    <td>@vehicle.Year</td>
+                    <td>@vehicle.CurrentMileageKm</td>
+                    <td>@(vehicle.IsActive ? "Активен" : "Неактивен")</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    }
+   

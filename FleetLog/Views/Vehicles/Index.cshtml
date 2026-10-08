@@ -22,6 +22,7 @@
                 <th>Година</th>
                 <th>Километраж (км)</th>
                 <th>Статус</th>
+                <th>Действия</th>
             </tr>
             </thead>
             <tbody>
@@ -34,6 +35,14 @@
                     <td>@vehicle.Year</td>
                     <td>@vehicle.CurrentMileageKm</td>
                     <td>@(vehicle.IsActive ? "Активен" : "Неактивен")</td>
+                    <td>
+                        <a asp-controller="Vehicles"
+                           asp-action="Details"
+                           asp-route-id="@vehicle.Id"
+                           class="btn btn-primary btn-sm">
+                            Детайли
+                        </a>
+                    </td>
                 </tr>
             }
             </tbody>

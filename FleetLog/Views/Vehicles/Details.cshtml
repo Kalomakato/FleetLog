@@ -1,0 +1,35 @@
+@model FleetLog.ViewModels.VehicleDetailsViewModel
+
+@{
+    ViewData["Title"] = "Детайли за автомобила";
+}
+<h1>Детайли за автомобила</h1>
+
+<dl class="row">
+    <dt class="col-sm-3">Регистрационен номер</dt>
+    <dd class="col-sm-9">@Model.RegistrationNumber</dd>
+    
+    <dt class="col-sm-3">Марка</dt>
+    <dd class="col-sm-9">@Model.Make</dd>
+
+    <dt class="col-sm-3">Модел</dt>
+    <dd class="col-sm-9">@Model.Model</dd>
+    
+    <dt class="col-sm-3">Година</dt>
+    <dd class="col-sm-9">@Model.Year</dd>
+
+    <dt class="col-sm-3">VIN</dt>
+    <dd class="col-sm-9">@Model.VIN</dd>
+    
+    <dt class="col-sm-3">Километраж (км)</dt>
+    <dd class="col-sm-9">@Model.CurrentMileageKm</dd>
+
+    <dt class="col-sm-3">Статус</dt>
+    <dd class="col-sm-9">@(Model.IsActive ? "Активен" : "Неактивен")</dd>
+    
+    <dt class="col-sm-3">Гориво</dt>
+    <dd class="col-sm-9">@Model.FuelType</dd>
+</dl>
+<a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
+    Назад към автомобилите
+</a>

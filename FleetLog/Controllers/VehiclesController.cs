@@ -65,4 +65,9 @@ public class VehiclesController : Controller
 
         return View(vehicle);
     }
+    [HttpGet]
+    public IActionResult Create()
+    {
+        return View(new VehicleCreateViewModel());
+    }
 }

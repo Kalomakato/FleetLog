@@ -5,7 +5,12 @@
     
 }
 
-    <h1>Автомобили</h1>
+<h1>Автомобили</h1>
+<p>
+    <a asp-controller="Vehicles" asp-action="Create" class="btn btn-primary">
+        Добавяне на автомобил
+    </a>
+</p>
     @if (!Model.Any())
     {
         <p>Все още няма добавени автомобили.</p>

@@ -71,7 +71,9 @@ public class VehiclesController : Controller
     {
         return View(new VehicleCreateViewModel());
     }
-    
+    // "model" clashes with the car's "Model" field.
+    // Empty prefix fixes the form values coming through empty.
+    // "Model" is the car model, like Corolla or Cayenne.
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create([Bind(Prefix = "")] VehicleCreateViewModel model)
@@ -118,4 +120,93 @@ public class VehiclesController : Controller
 
         return RedirectToAction(nameof(Index));
     }
+
+    [HttpGet]
+    public async Task<IActionResult> Edit(int id)
+    {
+        var vehicle = await _context.Vehicles
+            .AsNoTracking()
+            .Where(v => v.Id == id)
+            .Select(v=> new VehicleEditViewModel
+            {
+                Id = v.Id,
+                RegistrationNumber = v.RegistrationNumber,
+                Make = v.Make,
+                Model = v.Model,
+                Year = v.Year,
+                VIN = v.VIN,
+                FuelType = v.FuelType,
+                CurrentMileageKm = v.CurrentMileageKm,
+                IsActive = v.IsActive
+            })
+            .FirstOrDefaultAsync();
+        
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+        
+        return View(vehicle);
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit([Bind(Prefix = "")] VehicleEditViewModel model)
+    {
+        var vehicle = await _context.Vehicles
+            .FirstOrDefaultAsync(v => v.Id == model.Id);
+
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        if (await _context.Vehicles.AnyAsync(
+                v => v.Id != model.Id &&
+                     v.RegistrationNumber == model.RegistrationNumber))
+        {
+            ModelState.AddModelError(
+                nameof(model.RegistrationNumber),
+                "Вече съществува автомобил с този регистрационен номер.");
+        }
+
+        if (await _context.Vehicles.AnyAsync(
+                v => v.Id != model.Id && v.VIN == model.VIN))
+        {
+            ModelState.AddModelError(
+                nameof(model.VIN),
+                "Вече съществува автомобил с този VIN.");
+        }
+        
+        if (model.CurrentMileageKm < vehicle.CurrentMileageKm)
+        {
+            ModelState.AddModelError(
+                nameof(model.CurrentMileageKm),
+                "Километражът не може да бъде по-малък от текущия.");
+        }
+
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        vehicle.RegistrationNumber = model.RegistrationNumber;
+        vehicle.Make = model.Make;
+        vehicle.Model = model.Model;
+        vehicle.Year = model.Year;
+        vehicle.VIN = model.VIN;
+        vehicle.FuelType = model.FuelType!.Value;
+        vehicle.CurrentMileageKm = model.CurrentMileageKm;
+        vehicle.IsActive = model.IsActive;
+
+        await _context.SaveChangesAsync();
+
+        return RedirectToAction(nameof(Index));
+    }
+    
 }

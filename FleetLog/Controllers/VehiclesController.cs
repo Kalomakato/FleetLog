@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FleetLog.Data;
 using FleetLog.Data.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
 
 namespace FleetLog.Controllers;
 
@@ -206,6 +207,89 @@ public class VehiclesController : Controller
 
         await _context.SaveChangesAsync();
 
+        return RedirectToAction(nameof(Index));
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Delete(int id)
+    {
+        var vehicle = await _context.Vehicles
+            .AsNoTracking()
+            .Where(v=> v.Id == id)
+            .Select(v => new VehicleDeleteViewModel
+            {
+                Id = v.Id,
+                RegistrationNumber =  v.RegistrationNumber,
+                Make = v.Make,
+                Model = v.Model,
+                })
+            .FirstOrDefaultAsync();
+
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+        
+        return View(vehicle);
+            
+    }
+
+    [HttpPost, ActionName("Delete")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> DeleteConfirmed(int id)
+    {
+        var vehicle = await _context.Vehicles
+            .FirstOrDefaultAsync(v => v.Id == id);
+
+        if (vehicle == null)
+        {
+            return NotFound();
+        }
+        
+        var hasFuelEntries = await _context.FuelEntries
+            .AnyAsync(f => f.VehicleId == id);
+        
+        var hasRepairs = await  _context.Repairs
+            .AnyAsync(r => r.VehicleId == id);
+
+        if (hasFuelEntries || hasRepairs)
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                "Автомобилът има записани зареждания или ремонти и не може да бъде изтрит.");
+
+            var model = new VehicleDeleteViewModel
+            {
+                Id = vehicle.Id,
+                RegistrationNumber = vehicle.RegistrationNumber,
+                Make = vehicle.Make,
+                Model = vehicle.Model,
+            };
+            return View("Delete", model);
+        }
+
+        try
+        {
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateException ex)
+            when (ex.InnerException is SqlException { Number: 547 })
+        {
+            ModelState.AddModelError(
+                string.Empty,
+                "Автомобилът не може да бъде изтрит, защото има свързани записи.");
+
+            var model = new VehicleDeleteViewModel
+            {
+                Id = vehicle.Id,
+                RegistrationNumber = vehicle.RegistrationNumber,
+                Make = vehicle.Make,
+                Model = vehicle.Model
+            };
+
+            return View("Delete", model);
+        }
         return RedirectToAction(nameof(Index));
     }
     

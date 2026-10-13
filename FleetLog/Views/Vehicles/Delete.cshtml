@@ -1,0 +1,26 @@
+@model FleetLog.ViewModels.VehicleDeleteViewModel
+
+    @{
+        ViewData["Title"] = "Изтриване на автомобил";
+    }
+    
+    <h1>Изтриване на автомобил</h1>
+    
+    <p>Сигурни ли сте, че искате да изтриете този автомобил?</p>
+    
+    <p>
+        <strong>@Model.RegistrationNumber</strong>
+        — @Model.Make @Model.Model
+    </p>
+    
+    <div asp-validation-summary="All" class="text-danger"></div>
+    
+    <form asp-controller="Vehicles" asp-action="Delete" method="post">
+    <input asp-for="Id" type="hidden" />
+    
+    <button type="submit" class="btn btn-danger">Изтрий</button>
+
+    <a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
+        Отказ
+    </a>
+    </form>

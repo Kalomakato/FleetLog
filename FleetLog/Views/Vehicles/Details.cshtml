@@ -1,4 +1,5 @@
 @model FleetLog.ViewModels.VehicleDetailsViewModel
+@using FleetLog.Data.Enums
 
 @{
     ViewData["Title"] = "Детайли за автомобила";
@@ -28,7 +29,15 @@
     <dd class="col-sm-9">@(Model.IsActive ? "Активен" : "Неактивен")</dd>
     
     <dt class="col-sm-3">Гориво</dt>
-    <dd class="col-sm-9">@Model.FuelType</dd>
+    <dd class="col-sm-9">
+    @(Model.FuelType switch
+    {
+        FuelType.Petrol => "Бензин",
+        FuelType.Diesel => "Дизел",
+            _=> "Неизвестно"
+            
+    })
+    </dd>
 </dl>
 <a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
     Назад към автомобилите

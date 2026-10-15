@@ -59,6 +59,12 @@
                            class="btn btn-danger btn-sm">
                             Изтриване
                         </a>
+                        <a asp-controller="FuelEntries"
+                           asp-action="Index"
+                           asp-route-vehicleId="@vehicle.Id"
+                           class="btn btn-outline-primary btn-sm">
+                            Зареждания
+                        </a>
                     </td>
                 </tr>
             }

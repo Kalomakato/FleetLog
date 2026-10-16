@@ -20,7 +20,10 @@
     
     <button type="submit" class="btn btn-danger">Изтрий</button>
 
-    <a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
+    <a asp-controller="Vehicles"
+       asp-action="Details"
+       asp-route-id="@Model.Id"
+       class="btn btn-secondary">
         Отказ
     </a>
     </form>

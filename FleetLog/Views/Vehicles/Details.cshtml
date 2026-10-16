@@ -39,6 +39,29 @@
     })
     </dd>
 </dl>
-<a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
+<div class="d-flex flex-wrap gap-2">
+<a asp-controller="Vehicles"
+   asp-action="Edit"
+   asp-route-id="@Model.Id"
+   class="btn btn-primary">
+    Редактиране
+</a>
+
+<a asp-controller="FuelEntries"
+   asp-action="Index"
+   asp-route-vehicleId="@Model.Id"
+   class="btn btn-outline-primary">
+    Зареждания
+</a>
+<a asp-controller="Vehicles"
+   asp-action="Delete"
+   asp-route-id="@Model.Id"
+   class="btn btn-danger">
+    Изтриване
+</a>
+<a asp-controller="Vehicles"
+   asp-action="Index"
+   class="btn btn-secondary">
     Назад към автомобилите
 </a>
+</div>

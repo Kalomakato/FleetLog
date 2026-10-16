@@ -9,29 +9,30 @@
 <div class="row">
     <div class="col-md-6">
         <form asp-controller="Vehicles" asp-action="Create" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="mb-3">
                 <label asp-for="RegistrationNumber" class="form-label"></label>
-                <input asp-for="RegistrationNumber" class="form-control" />
+                <input asp-for="RegistrationNumber" class="form-control"/>
                 <span asp-validation-for="RegistrationNumber" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Make" class="form-label"></label>
-                <input asp-for="Make" class="form-control" />
+                <input asp-for="Make" class="form-control"/>
                 <span asp-validation-for="Make" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Model" class="form-label"></label>
-                <input asp-for="Model" class="form-control" />
+                <input asp-for="Model" class="form-control"/>
                 <span asp-validation-for="Model" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Year" class="form-label"></label>
-                <input asp-for="Year" class="form-control" />
+                <input asp-for="Year" class="form-control"/>
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="VIN" class="form-label"></label>
-                <input asp-for="VIN" class="form-control" />
+                <input asp-for="VIN" class="form-control"/>
                 <span asp-validation-for="VIN" class="text-danger"></span>
             </div>
             <div class="mb-3">
@@ -45,11 +46,11 @@
             </div>
             <div class="mb-3">
                 <label asp-for="CurrentMileageKm" class="form-label"></label>
-                <input asp-for="CurrentMileageKm" class="form-control" />
+                <input asp-for="CurrentMileageKm" class="form-control"/>
                 <span asp-validation-for="CurrentMileageKm" class="text-danger"></span>
             </div>
             <div class="form-check mb-3">
-                <input asp-for="IsActive" class="form-check-input" />
+                <input asp-for="IsActive" class="form-check-input"/>
                 <label asp-for="IsActive" class="form-check-label"></label>
             </div>
             <button type="submit" class="btn btn-primary">Запази</button>
@@ -57,7 +58,7 @@
             <a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
                 Назад към автомобилите
             </a>
-            
+
         </form>
     </div>
 </div>

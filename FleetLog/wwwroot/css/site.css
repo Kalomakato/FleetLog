@@ -1,22 +1,184 @@
-html {
-  font-size: 14px;
-}
-
-@media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
-}
-
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+:root {
+  --fleet-background: #f5f5f7;
+  --fleet-surface: #ffffff;
+  --fleet-text: #1d1d1f;
+  --fleet-muted: #626269;
+  --fleet-border: #dedee3;
+  --fleet-blue: #0066cc;
 }
 
 html {
+  font-size: 16px;
   position: relative;
   min-height: 100%;
 }
 
 body {
-  margin-bottom: 60px;
+  margin-bottom: 80px;
+  background-color: var(--fleet-background);
+  color: var(--fleet-text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI",
+  Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.6;
+}
+
+main {
+  padding-top: 1.5rem;
+}
+
+h1 {
+  margin-bottom: 1.5rem;
+  font-size: clamp(1.8rem, 4vw, 2.75rem);
+  font-weight: 700;
+  letter-spacing: -0.035em;
+  overflow-wrap: anywhere;
+}
+
+.lead {
+  color: var(--fleet-muted);
+}
+
+a {
+  color: var(--fleet-blue);
+}
+
+.navbar {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+
+.navbar-brand {
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.navbar .nav-link {
+  border-radius: 10px;
+  padding: 0.6rem 0.85rem;
+}
+
+.navbar .nav-link:hover {
+  background-color: var(--fleet-background);
+}
+
+.btn {
+  border-radius: 10px;
+  padding: 0.65rem 1rem;
+  font-weight: 500;
+}
+
+.btn-sm {
+  padding: 0.45rem 0.75rem;
+}
+
+.btn-primary {
+  background-color: var(--fleet-blue);
+  border-color: var(--fleet-blue);
+}
+
+.btn-primary:hover {
+  background-color: #0054a8;
+  border-color: #0054a8;
+}
+
+.btn-secondary {
+  color: var(--fleet-text);
+  background-color: #e8e8ed;
+  border-color: #e8e8ed;
+}
+
+.btn-secondary:hover {
+  color: var(--fleet-text);
+  background-color: #dcdce3;
+  border-color: #dcdce3;
+}
+
+.btn-outline-primary {
+  color: var(--fleet-blue);
+  border-color: var(--fleet-blue);
+}
+
+.btn-outline-primary:hover {
+  background-color: var(--fleet-blue);
+  border-color: var(--fleet-blue);
+  color: #ffffff;
+}
+
+.form-label,
+.form-check-label {
+  font-weight: 500;
+}
+
+.form-control,
+.form-select {
+  border-color: var(--fleet-border);
+  border-radius: 10px;
+  padding: 0.7rem 0.85rem;
+  font-size: 1rem;
+}
+
+.btn:focus-visible,
+.nav-link:focus-visible,
+.navbar-brand:focus-visible,
+.navbar-toggler:focus-visible {
+  outline: 3px solid var(--fleet-blue);
+  outline-offset: 3px;
+}
+
+.form-control:focus,
+.form-select:focus,
+.form-check-input:focus {
+  border-color: var(--fleet-blue);
+  box-shadow: 0 0 0 0.2rem rgba(0, 102, 204, 0.2);
+}
+
+.fleet-table-panel {
+  background-color: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.fleet-table-panel .table {
+  color: var(--fleet-text);
+}
+
+.fleet-table-panel th {
+  padding: 1rem;
+  background-color: #fafafa;
+  color: var(--fleet-muted);
+  font-size: 0.875rem;
+  font-weight: 600;
+  border-bottom: 1px solid var(--fleet-border);
+}
+
+.fleet-table-panel td {
+  padding: 1rem;
+  border-color: #eeeeF1;
+}
+
+.fleet-table-panel tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.fleet-table-panel .btn {
+  white-space: nowrap;
+}
+
+@media (max-width: 575.98px) {
+  main {
+    padding-top: 0.75rem;
+  }
+
+  .fleet-table-panel th,
+  .fleet-table-panel td {
+    padding: 0.75rem;
+  }
+}
+.fleet-form-panel {
+  padding: clamp(1rem, 3vw, 2rem);
+  background-color: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }

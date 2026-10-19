@@ -4,42 +4,46 @@
     ViewData["Title"] = "Зареждания";
 }
 
-<h1> Зареждания — @Model.RegistrationNumber</h1>
+<h1>Зареждания — @Model.RegistrationNumber</h1>
 
 @if (!Model.FuelEntries.Any())
-
 {
     <p>Все още няма записани зареждания за този автомобил.</p>
 }
-
 else
 {
-    <table class="table">
-        <thead>
-        <tr>
-            <th>Дата</th>
-            <th>Литри</th>
-            <th>Обща сума</th>
-            <th>Километраж (км)</th>
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var entry in Model.FuelEntries)
-        {
+    <div class="table-responsive fleet-table-panel">
+        <table class="table align-middle mb-0">
+            <thead class="text-nowrap">
             <tr>
-                <td>@entry.Date.ToString("dd.MM.yyyy")</td>
-                <td>@entry.Litres.ToString("F2")</td>
-                <td>@entry.TotalCost.ToString("F2")</td>
-                <td>@entry.MileageKm</td>
+                <th>Дата</th>
+                <th>Литри</th>
+                <th>Обща сума</th>
+                <th>Километраж (км)</th>
             </tr>
-        }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+            @foreach (var entry in Model.FuelEntries)
+            {
+                <tr>
+                    <td class="text-nowrap">
+                        @entry.Date.ToString("dd.MM.yyyy")
+                    </td>
+                    <td>@entry.Litres.ToString("F2")</td>
+                    <td>@entry.TotalCost.ToString("F2")</td>
+                    <td>@entry.MileageKm</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
 }
-<a asp-controller="Vehicles"
+
+<div class="mt-4">
+    <a asp-controller="Vehicles"
        asp-action="Details"
        asp-route-id="@Model.VehicleId"
        class="btn btn-secondary">
-    Назад към автомобила
+        Назад към автомобила
     </a>
-
+</div>

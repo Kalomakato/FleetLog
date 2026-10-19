@@ -6,22 +6,33 @@
 
 <h1>Добавяне на автомобил</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="Vehicles" asp-action="Create" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            
-            <partial name="_VehicleFormFields" model="Model" />
-            
-            <button type="submit" class="btn btn-primary">Запази</button>
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="fleet-form-panel">
+            <form asp-controller="Vehicles"
+                  asp-action="Create"
+                  method="post">
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
 
-            <a asp-controller="Vehicles" asp-action="Index" class="btn btn-secondary">
-                Назад към автомобилите
-            </a>
+                <partial name="_VehicleFormFields" model="Model" />
 
-        </form>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Запази
+                    </button>
+
+                    <a asp-controller="Vehicles"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Назад към автомобилите
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

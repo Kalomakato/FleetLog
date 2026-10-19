@@ -6,25 +6,36 @@
 
 <h1>Редактиране на автомобил</h1>
 
+<div class="row justify-content-center">
+    <div class="col-12 col-md-10 col-lg-8">
+        <div class="fleet-form-panel">
+            <form asp-controller="Vehicles"
+                  asp-action="Edit"
+                  method="post">
+                <input asp-for="Id" type="hidden" />
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="Vehicles" asp-action="Edit" method="post">
-            <input asp-for="Id" type="hidden" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <partial name="_VehicleFormFields" model="Model" />
-            <button type="submit" class="btn btn-primary">Запази</button>
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
 
-            <a asp-controller="Vehicles"
-               asp-action="Details"
-               asp-route-id="@Model.Id"
-               class="btn btn-secondary">
-            Отказ
-            </a>
+                <partial name="_VehicleFormFields" model="Model" />
 
-        </form>
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Запази
+                    </button>
+
+                    <a asp-controller="Vehicles"
+                       asp-action="Details"
+                       asp-route-id="@Model.Id"
+                       class="btn btn-secondary">
+                        Отказ
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
 </div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

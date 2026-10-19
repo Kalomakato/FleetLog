@@ -2,73 +2,81 @@
 
 @{
     ViewData["Title"] = "Автомобили";
-    
 }
 
 <h1>Автомобили</h1>
+
 <p>
-    <a asp-controller="Vehicles" asp-action="Create" class="btn btn-primary">
+    <a asp-controller="Vehicles"
+       asp-action="Create"
+       class="btn btn-primary">
         Добавяне на автомобил
     </a>
 </p>
-    @if (!Model.Any())
-    {
-        <p>Все още няма добавени автомобили.</p>
-    }
-    
-    else
-    {
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Регистрационен номер</th>
-                <th>Марка</th>
-                <th>Модел</th>
-                <th>Година</th>
-                <th>Километраж (км)</th>
-                <th>Статус</th>
-                <th>Действия</th>
-            </tr>
+
+@if (!Model.Any())
+{
+    <p>Все още няма добавени автомобили.</p>
+}
+else
+{
+    <div class="table-responsive fleet-table-panel">
+        <table class="table align-middle mb-0">
+            <thead class="text-nowrap">
+                <tr>
+                    <th>Регистрационен номер</th>
+                    <th>Марка</th>
+                    <th>Модел</th>
+                    <th>Година</th>
+                    <th>Километраж (км)</th>
+                    <th>Статус</th>
+                    <th>Действия</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var vehicle in Model)
-            {
-                <tr>
-                    <td>@vehicle.RegistrationNumber</td>
-                    <td>@vehicle.Make</td>
-                    <td>@vehicle.Model</td>
-                    <td>@vehicle.Year</td>
-                    <td>@vehicle.CurrentMileageKm</td>
-                    <td>@(vehicle.IsActive ? "Активен" : "Неактивен")</td>
-                    <td>
-                        <a asp-controller="Vehicles"
-                           asp-action="Details"
-                           asp-route-id="@vehicle.Id"
-                           class="btn btn-primary btn-sm">
-                            Детайли
-                        </a>
-                        <a asp-controller="Vehicles"
-                           asp-action="Edit"
-                           asp-route-id="@vehicle.Id"
-                           class="btn btn-secondary btn-sm">
-                            Редактиране
-                        </a>
-                        <a asp-controller="Vehicles"
-                           asp-action="Delete"
-                           asp-route-id="@vehicle.Id"
-                           class="btn btn-danger btn-sm">
-                            Изтриване
-                        </a>
-                        <a asp-controller="FuelEntries"
-                           asp-action="Index"
-                           asp-route-vehicleId="@vehicle.Id"
-                           class="btn btn-outline-primary btn-sm">
-                            Зареждания
-                        </a>
-                    </td>
-                </tr>
-            }
+                @foreach (var vehicle in Model)
+                {
+                    <tr>
+                        <td>@vehicle.RegistrationNumber</td>
+                        <td>@vehicle.Make</td>
+                        <td>@vehicle.Model</td>
+                        <td>@vehicle.Year</td>
+                        <td>@vehicle.CurrentMileageKm</td>
+                        <td>@(vehicle.IsActive ? "Активен" : "Неактивен")</td>
+                        <td>
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Vehicles"
+                                   asp-action="Details"
+                                   asp-route-id="@vehicle.Id"
+                                   class="btn btn-primary btn-sm">
+                                    Детайли
+                                </a>
+
+                                <a asp-controller="Vehicles"
+                                   asp-action="Edit"
+                                   asp-route-id="@vehicle.Id"
+                                   class="btn btn-secondary btn-sm">
+                                    Редактиране
+                                </a>
+
+                                <a asp-controller="Vehicles"
+                                   asp-action="Delete"
+                                   asp-route-id="@vehicle.Id"
+                                   class="btn btn-danger btn-sm">
+                                    Изтриване
+                                </a>
+
+                                <a asp-controller="FuelEntries"
+                                   asp-action="Index"
+                                   asp-route-vehicleId="@vehicle.Id"
+                                   class="btn btn-outline-primary btn-sm">
+                                    Зареждания
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
-    }
-   
+    </div>
+}

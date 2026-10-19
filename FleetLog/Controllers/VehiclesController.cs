@@ -9,18 +9,15 @@ namespace FleetLog.Controllers;
 
 public class VehiclesController : Controller
 {
-    
-    
     private readonly FleetLogDbContext _context;
-    
+
     public VehiclesController(FleetLogDbContext context)
     {
         _context = context;
     }
-    
+
     public async Task<IActionResult> Index()
     {
-       
         var vehicles = await _context.Vehicles
             .AsNoTracking()
             .OrderBy(v => v.RegistrationNumber)
@@ -34,13 +31,12 @@ public class VehiclesController : Controller
                 CurrentMileageKm = v.CurrentMileageKm,
                 IsActive = v.IsActive
             })
-            .ToListAsync(); 
-        
-        
-        
+            .ToListAsync();
+
+
         return View(vehicles);
     }
-    
+
     public async Task<IActionResult> Details(int id)
     {
         var vehicle = await _context.Vehicles
@@ -59,7 +55,7 @@ public class VehiclesController : Controller
                 IsActive = v.IsActive
             })
             .FirstOrDefaultAsync();
-        
+
         if (vehicle == null)
         {
             return NotFound();
@@ -67,11 +63,13 @@ public class VehiclesController : Controller
 
         return View(vehicle);
     }
+
     [HttpGet]
     public IActionResult Create()
     {
         return View(new VehicleCreateViewModel());
     }
+
     // "model" clashes with the car's "Model" field.
     // Empty prefix fixes the form values coming through empty.
     // "Model" is the car model, like Corolla or Cayenne.
@@ -83,22 +81,9 @@ public class VehiclesController : Controller
         {
             return View(model);
         }
-        
-        if (await _context.Vehicles.AnyAsync(
-                v => v.RegistrationNumber == model.RegistrationNumber))
-        {
-            ModelState.AddModelError(
-                nameof(model.RegistrationNumber),
-                "Вече съществува автомобил с този регистрационен номер.");
-        }
-        
-        if (await _context.Vehicles.AnyAsync(v => v.VIN == model.VIN))
-        {
-            ModelState.AddModelError(
-                nameof(model.VIN),
-                "Вече съществува автомобил с този VIN-Рама.");
-        }
-        
+
+        await ValidateUniqueVehicleFieldsAsync(model);
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -128,7 +113,7 @@ public class VehiclesController : Controller
         var vehicle = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == id)
-            .Select(v=> new VehicleEditViewModel
+            .Select(v => new VehicleEditViewModel
             {
                 Id = v.Id,
                 RegistrationNumber = v.RegistrationNumber,
@@ -141,15 +126,15 @@ public class VehiclesController : Controller
                 IsActive = v.IsActive
             })
             .FirstOrDefaultAsync();
-        
+
         if (vehicle == null)
         {
             return NotFound();
         }
-        
+
         return View(vehicle);
     }
-    
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit([Bind(Prefix = "")] VehicleEditViewModel model)
@@ -167,23 +152,8 @@ public class VehiclesController : Controller
             return View(model);
         }
 
-        if (await _context.Vehicles.AnyAsync(
-                v => v.Id != model.Id &&
-                     v.RegistrationNumber == model.RegistrationNumber))
-        {
-            ModelState.AddModelError(
-                nameof(model.RegistrationNumber),
-                "Вече съществува автомобил с този регистрационен номер.");
-        }
+        await ValidateUniqueVehicleFieldsAsync(model, model.Id);
 
-        if (await _context.Vehicles.AnyAsync(
-                v => v.Id != model.Id && v.VIN == model.VIN))
-        {
-            ModelState.AddModelError(
-                nameof(model.VIN),
-                "Вече съществува автомобил с този VIN.");
-        }
-        
         if (model.CurrentMileageKm < vehicle.CurrentMileageKm)
         {
             ModelState.AddModelError(
@@ -215,23 +185,22 @@ public class VehiclesController : Controller
     {
         var vehicle = await _context.Vehicles
             .AsNoTracking()
-            .Where(v=> v.Id == id)
+            .Where(v => v.Id == id)
             .Select(v => new VehicleDeleteViewModel
             {
                 Id = v.Id,
-                RegistrationNumber =  v.RegistrationNumber,
+                RegistrationNumber = v.RegistrationNumber,
                 Make = v.Make,
                 Model = v.Model,
-                })
+            })
             .FirstOrDefaultAsync();
 
         if (vehicle == null)
         {
             return NotFound();
         }
-        
+
         return View(vehicle);
-            
     }
 
     [HttpPost, ActionName("Delete")]
@@ -245,11 +214,19 @@ public class VehiclesController : Controller
         {
             return NotFound();
         }
-        
+
+        var model = new VehicleDeleteViewModel
+        {
+            Id = vehicle.Id,
+            RegistrationNumber = vehicle.RegistrationNumber,
+            Make = vehicle.Make,
+            Model = vehicle.Model
+        };
+
         var hasFuelEntries = await _context.FuelEntries
             .AnyAsync(f => f.VehicleId == id);
-        
-        var hasRepairs = await  _context.Repairs
+
+        var hasRepairs = await _context.Repairs
             .AnyAsync(r => r.VehicleId == id);
 
         if (hasFuelEntries || hasRepairs)
@@ -258,13 +235,6 @@ public class VehiclesController : Controller
                 string.Empty,
                 "Автомобилът има записани зареждания или ремонти и не може да бъде изтрит.");
 
-            var model = new VehicleDeleteViewModel
-            {
-                Id = vehicle.Id,
-                RegistrationNumber = vehicle.RegistrationNumber,
-                Make = vehicle.Make,
-                Model = vehicle.Model,
-            };
             return View("Delete", model);
         }
 
@@ -280,17 +250,35 @@ public class VehiclesController : Controller
                 string.Empty,
                 "Автомобилът не може да бъде изтрит, защото има свързани записи.");
 
-            var model = new VehicleDeleteViewModel
-            {
-                Id = vehicle.Id,
-                RegistrationNumber = vehicle.RegistrationNumber,
-                Make = vehicle.Make,
-                Model = vehicle.Model
-            };
-
             return View("Delete", model);
         }
+
         return RedirectToAction(nameof(Index));
     }
-    
+
+    private async Task ValidateUniqueVehicleFieldsAsync(
+        VehicleFormViewModel model,
+        int? excludedVehicleId = null)
+    {
+        var vehicles = _context.Vehicles.AsQueryable();
+
+        if (excludedVehicleId.HasValue)
+        {
+            vehicles = vehicles.Where(v => v.Id != excludedVehicleId.Value);
+        }
+
+        if (await vehicles.AnyAsync(v => v.RegistrationNumber == model.RegistrationNumber))
+        {
+            ModelState.AddModelError(
+                nameof(model.RegistrationNumber),
+                "Вече съществува автомобил с този регистрационен номер.");
+        }
+
+        if (await vehicles.AnyAsync(v => v.VIN == model.VIN))
+        {
+            ModelState.AddModelError(
+                nameof(model.VIN),
+                "Вече съществува автомобил с този VIN.");
+        }
+    }
 }

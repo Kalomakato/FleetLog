@@ -5,7 +5,14 @@
 }
 
 <h1>Зареждания — @Model.RegistrationNumber</h1>
-
+<p>
+    <a asp-controller="FuelEntries"
+       asp-action="Create"
+       asp-route-vehicleId="@Model.VehicleId"
+       class="btn btn-primary">
+        Добавяне на зареждане
+    </a>
+</p>
 @if (!Model.FuelEntries.Any())
 {
     <p>Все още няма записани зареждания за този автомобил.</p>

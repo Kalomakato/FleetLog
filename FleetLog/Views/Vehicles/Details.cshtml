@@ -5,73 +5,86 @@
     ViewData["Title"] = "Детайли за автомобила";
 }
 
-<h1>Детайли за автомобила</h1>
-
-<dl class="row">
-    <dt class="col-sm-3">Регистрационен номер</dt>
-    <dd class="col-sm-9">@Model.RegistrationNumber</dd>
-
-    <dt class="col-sm-3">Марка</dt>
-    <dd class="col-sm-9">@Model.Make</dd>
-
-    <dt class="col-sm-3">Модел</dt>
-    <dd class="col-sm-9">@Model.Model</dd>
-
-    <dt class="col-sm-3">Година</dt>
-    <dd class="col-sm-9">@Model.Year</dd>
-
-    <dt class="col-sm-3">VIN</dt>
-    <dd class="col-sm-9">@Model.VIN</dd>
-
-    <dt class="col-sm-3">Километраж (км)</dt>
-    <dd class="col-sm-9">@Model.CurrentMileageKm</dd>
-
-    <dt class="col-sm-3">Статус</dt>
-    <dd class="col-sm-9">@(Model.IsActive ? "Активен" : "Неактивен")</dd>
-
-    <dt class="col-sm-3">Гориво</dt>
-    <dd class="col-sm-9">
-        @(Model.FuelType switch
-        {
-            FuelType.Petrol => "Бензин",
-            FuelType.Diesel => "Дизел",
-            _ => "Неизвестно"
-        })
-    </dd>
-</dl>
-
-<div class="d-flex flex-wrap gap-2">
-    <a asp-controller="Vehicles"
-       asp-action="Edit"
-       asp-route-id="@Model.Id"
-       class="btn btn-primary">
-        Редактиране
-    </a>
-
-    <a asp-controller="FuelEntries"
-       asp-action="Index"
-       asp-route-vehicleId="@Model.Id"
-       class="btn btn-outline-primary">
-        Зареждания
-    </a>
-
-    <a asp-controller="Repairs"
-       asp-action="Index"
-       asp-route-vehicleId="@Model.Id"
-       class="btn btn-outline-primary">
-        Ремонти
-    </a>
-
-    <a asp-controller="Vehicles"
-       asp-action="Delete"
-       asp-route-id="@Model.Id"
-       class="btn btn-danger">
-        Изтриване
-    </a>
+<div class="fleet-page-header">
+    <div>
+        <h1>@Model.RegistrationNumber</h1>
+        <p>@Model.Make @Model.Model — @Model.Year</p>
+    </div>
 
     <a asp-controller="Vehicles"
        asp-action="Index"
        class="btn btn-secondary">
         Назад към автомобилите
     </a>
+</div>
+
+<div class="fleet-details-panel">
+    <h2>Данни за автомобила</h2>
+
+    <dl class="fleet-details-list">
+        <dt>Регистрационен номер</dt>
+        <dd>@Model.RegistrationNumber</dd>
+
+        <dt>Марка</dt>
+        <dd>@Model.Make</dd>
+
+        <dt>Модел</dt>
+        <dd>@Model.Model</dd>
+
+        <dt>Година</dt>
+        <dd>@Model.Year</dd>
+
+        <dt>VIN</dt>
+        <dd>@Model.VIN</dd>
+
+        <dt>Километраж (км)</dt>
+        <dd>@Model.CurrentMileageKm</dd>
+
+        <dt>Статус</dt>
+        <dd>
+            <span class="fleet-status @(Model.IsActive ? "fleet-status-active" : "fleet-status-inactive")">
+                @(Model.IsActive ? "Активен" : "Неактивен")
+            </span>
+        </dd>
+
+        <dt>Гориво</dt>
+        <dd>
+            @(Model.FuelType switch
+            {
+                FuelType.Petrol => "Бензин",
+                FuelType.Diesel => "Дизел",
+                _ => "Неизвестно"
+            })
+        </dd>
+    </dl>
+
+    <div class="fleet-details-actions">
+        <a asp-controller="FuelEntries"
+           asp-action="Index"
+           asp-route-vehicleId="@Model.Id"
+           class="btn fleet-btn-fuel">
+            Зареждания
+        </a>
+
+        <a asp-controller="Repairs"
+           asp-action="Index"
+           asp-route-vehicleId="@Model.Id"
+           class="btn fleet-btn-repair">
+            Ремонти
+        </a>
+
+        <a asp-controller="Vehicles"
+           asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn fleet-btn-edit">
+            Редактиране
+        </a>
+
+        <a asp-controller="Vehicles"
+           asp-action="Delete"
+           asp-route-id="@Model.Id"
+           class="btn btn-outline-danger">
+            Изтриване
+        </a>
+    </div>
 </div>

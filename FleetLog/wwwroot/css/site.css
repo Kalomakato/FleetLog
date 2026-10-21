@@ -196,3 +196,283 @@ body.fleet-app > .fleet-content {
 body.fleet-app > .fleet-footer {
   margin-top: auto;
 }
+
+.fleet-hero {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: clamp(2rem, 6vw, 5rem) 0;
+}
+
+.fleet-eyebrow {
+  margin-bottom: 1rem;
+  color: var(--fleet-blue);
+  font-size: 2rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+}
+
+.fleet-hero h1 {
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.1rem, 5vw, 4rem);
+  line-height: 1.12;
+  letter-spacing: -0.045em;
+}
+
+.fleet-hero-description {
+  max-width: 620px;
+  margin: 0 auto 2rem;
+  color: var(--fleet-muted);
+  font-size: clamp(1.05rem, 2vw, 1.25rem);
+  line-height: 1.7;
+}
+
+.fleet-home-features {
+  padding-bottom: 1.5rem;
+}
+
+.fleet-feature-panel {
+  height: 100%;
+  padding: clamp(1.5rem, 3vw, 2rem);
+  background-color: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: 20px;
+}
+
+.fleet-feature-panel h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.fleet-feature-panel p {
+  margin-bottom: 0;
+  color: var(--fleet-muted);
+}
+
+@media (max-width: 575.98px) {
+  .fleet-hero .btn {
+    width: 100%;
+  }
+}
+.fleet-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.fleet-page-header h1 {
+  margin-bottom: 0.5rem;
+}
+
+.fleet-page-header p {
+  margin-bottom: 0;
+  color: var(--fleet-muted);
+}
+
+.fleet-page-header > .btn {
+  flex-shrink: 0;
+}
+
+.fleet-empty-state {
+  padding: clamp(2rem, 5vw, 4rem);
+  background-color: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.fleet-empty-state h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+
+.fleet-empty-state p {
+  margin-bottom: 0;
+  color: var(--fleet-muted);
+}
+
+.fleet-status {
+  display: inline-block;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.fleet-status-active {
+  color: #21633b;
+  background-color: #eaf5ed;
+}
+
+.fleet-status-inactive {
+  color: #56565e;
+  background-color: #eeeef1;
+}
+
+@media (max-width: 575.98px) {
+  .fleet-page-header {
+    align-items: stretch;
+  }
+
+  .fleet-page-header > .btn {
+    width: 100%;
+  }
+}
+.fleet-row-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.25rem;
+}
+
+.fleet-row-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 5.75rem;
+  width: 5.75rem;
+  min-height: 2rem;
+  padding: 0.3rem 0.2rem;
+  font-size: 0.7rem;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.fleet-table-panel .fleet-vehicles-table th,
+.fleet-table-panel .fleet-vehicles-table td {
+  padding: 0.75rem 0.6rem;
+}
+
+.fleet-btn-fuel {
+  color: #006575;
+  background-color: #e0f3f7;
+  border-color: #e0f3f7;
+}
+
+.fleet-btn-fuel:hover {
+  color: #004e5b;
+  background-color: #c9e9ef;
+  border-color: #c9e9ef;
+}
+
+.fleet-btn-repair {
+  color: #65419a;
+  background-color: #f0eafa;
+  border-color: #f0eafa;
+}
+
+.fleet-btn-repair:hover {
+  color: #50327c;
+  background-color: #e3d7f4;
+  border-color: #e3d7f4;
+}
+
+.fleet-btn-edit {
+  color: #805500;
+  background-color: #fff3d6;
+  border-color: #fff3d6;
+}
+
+.fleet-btn-edit:hover {
+  color: #654300;
+  background-color: #ffe8b0;
+  border-color: #ffe8b0;
+}
+.fleet-details-panel {
+  padding: clamp(1.25rem, 3vw, 2rem);
+  background-color: var(--fleet-surface);
+  border: 1px solid var(--fleet-border);
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+}
+
+.fleet-details-panel h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.fleet-details-list {
+  display: grid;
+  grid-template-columns: minmax(0, 15rem) minmax(0, 1fr);
+  gap: 1rem 2rem;
+  margin-bottom: 0;
+}
+
+.fleet-details-list dt {
+  color: var(--fleet-muted);
+  font-weight: 500;
+}
+
+.fleet-details-list dd {
+  margin: 0;
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.fleet-details-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--fleet-border);
+}
+
+.fleet-details-actions .btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 8rem;
+  min-height: 2.5rem;
+  font-size: 0.875rem;
+}
+
+@media (max-width: 575.98px) {
+  .fleet-details-list {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.3rem;
+  }
+
+  .fleet-details-list dd:not(:last-child) {
+    margin-bottom: 0.9rem;
+  }
+
+  .fleet-details-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fleet-details-actions .btn {
+    min-width: 0;
+    padding: 0.6rem 0.4rem;
+  }
+}
+@media (min-width: 576px) and (max-width: 991.98px) {
+  .fleet-details-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fleet-details-actions .btn {
+    min-width: 0;
+  }
+}
+.fleet-repairs-table {
+  min-width: 760px;
+}
+
+.fleet-repairs-table th:nth-child(2),
+.fleet-repairs-table td:nth-child(2) {
+  min-width: 220px;
+}
+
+.fleet-repairs-table th:nth-child(5),
+.fleet-repairs-table td:nth-child(5) {
+  min-width: 160px;
+}

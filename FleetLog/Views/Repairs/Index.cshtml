@@ -4,50 +4,57 @@
     ViewData["Title"] = "Ремонти";
 }
 
-<h1>Ремонти — @Model.RegistrationNumber</h1>
-<p>
+<div class="fleet-page-header">
+    <div>
+        <h1>Ремонти — @Model.RegistrationNumber</h1>
+        <p>История на ремонтите, разходите и обслужването на автомобила.</p>
+    </div>
+
     <a asp-controller="Repairs"
        asp-action="Create"
        asp-route-vehicleId="@Model.VehicleId"
        class="btn btn-primary">
         Добавяне на ремонт
     </a>
-</p>
+</div>
 
 @if (!Model.Repairs.Any())
 {
-    <p>Все още няма записани ремонти за този автомобил.</p>
+    <div class="fleet-empty-state">
+        <h2>Все още няма записани ремонти.</h2>
+        <p>Добавете първия ремонт за този автомобил чрез бутона по-горе.</p>
+    </div>
 }
 else
 {
     <div class="table-responsive fleet-table-panel">
-        <table class="table align-middle mb-0">
+        <table class="table fleet-repairs-table align-middle mb-0">
             <thead class="text-nowrap">
-            <tr>
-                <th>Дата</th>
-                <th>Описание</th>
-                <th>Обща сума</th>
-                <th>Километраж (км)</th>
-                <th>Сервиз</th>
-            </tr>
+                <tr>
+                    <th scope="col">Дата</th>
+                    <th scope="col">Описание</th>
+                    <th scope="col">Обща сума</th>
+                    <th scope="col">Километраж (км)</th>
+                    <th scope="col">Сервиз</th>
+                </tr>
             </thead>
             <tbody>
-            @foreach (var repair in Model.Repairs)
-            {
-                <tr>
-                    <td class="text-nowrap">
-                        @repair.Date.ToString("dd.MM.yyyy")
-                    </td>
-                    <td class="text-break">@repair.Description</td>
-                    <td>@repair.TotalCost.ToString("F2")</td>
-                    <td>@repair.MileageKm</td>
-                    <td class="text-break">
-                        @(string.IsNullOrWhiteSpace(repair.ServiceCentre)
-                            ? "Не е посочен"
-                            : repair.ServiceCentre)
-                    </td>
-                </tr>
-            }
+                @foreach (var repair in Model.Repairs)
+                {
+                    <tr>
+                        <td class="text-nowrap">
+                            @repair.Date.ToString("dd.MM.yyyy")
+                        </td>
+                        <td class="text-break">@repair.Description</td>
+                        <td>@repair.TotalCost.ToString("F2")</td>
+                        <td>@repair.MileageKm</td>
+                        <td class="text-break">
+                            @(string.IsNullOrWhiteSpace(repair.ServiceCentre)
+                                ? "Не е посочен"
+                                : repair.ServiceCentre)
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
     </div>

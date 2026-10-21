@@ -2,24 +2,61 @@
     ViewData["Title"] = "Начало";
 }
 
-<div class="text-center">
-    <h1 class="display-4">FleetLog</h1>
+<section class="fleet-hero text-center">
+    <p class="fleet-eyebrow">FleetLog</p>
 
-    <p class="lead">
-    Управлявайте автомобилите си и преглеждайте историята на зарежданията им.
+    <h1>Вашите автомобили.<br />Всичко на едно място.</h1>
+
+    <p class="fleet-hero-description">
+        Управлявайте автомобилите си и следете зарежданията,
+        ремонтите и километража им.
     </p>
 
-<div class="d-flex flex-wrap justify-content-center gap-2">
+    <div class="d-flex flex-wrap justify-content-center gap-3">
         <a asp-controller="Vehicles"
-            asp-action="Index"
-            class="btn btn-primary">
+           asp-action="Index"
+           class="btn btn-primary">
             Към автомобилите
         </a>
 
         <a asp-controller="Vehicles"
-            asp-action="Create" 
-            class="btn btn-outline-primary">
+           asp-action="Create"
+           class="btn btn-secondary">
             Добавяне на автомобил
         </a>
     </div>
-</div>
+</section>
+
+<section class="fleet-home-features" aria-label="Възможности на FleetLog">
+    <div class="row g-4">
+        <div class="col-12 col-md-4">
+            <article class="fleet-feature-panel">
+                <h2>Автомобили</h2>
+                <p>
+                    Основни данни, текущ километраж и статус
+                    за всеки ваш автомобил.
+                </p>
+            </article>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <article class="fleet-feature-panel">
+                <h2>Зареждания</h2>
+                <p>
+                    Записвайте количеството гориво и разходите.
+                    Преглеждайте историята по дати.
+                </p>
+            </article>
+        </div>
+
+        <div class="col-12 col-md-4">
+            <article class="fleet-feature-panel">
+                <h2>Ремонти</h2>
+                <p>
+                    Пазете описанията на ремонтите, разходите
+                    и информацията за сервиза.
+                </p>
+            </article>
+        </div>
+    </div>
+</section>

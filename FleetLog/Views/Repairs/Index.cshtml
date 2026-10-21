@@ -1,0 +1,63 @@
+@model FleetLog.ViewModels.VehicleRepairHistoryViewModel
+
+@{
+    ViewData["Title"] = "Ремонти";
+}
+
+<h1>Ремонти — @Model.RegistrationNumber</h1>
+<p>
+    <a asp-controller="Repairs"
+       asp-action="Create"
+       asp-route-vehicleId="@Model.VehicleId"
+       class="btn btn-primary">
+        Добавяне на ремонт
+    </a>
+</p>
+
+@if (!Model.Repairs.Any())
+{
+    <p>Все още няма записани ремонти за този автомобил.</p>
+}
+else
+{
+    <div class="table-responsive fleet-table-panel">
+        <table class="table align-middle mb-0">
+            <thead class="text-nowrap">
+            <tr>
+                <th>Дата</th>
+                <th>Описание</th>
+                <th>Обща сума</th>
+                <th>Километраж (км)</th>
+                <th>Сервиз</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var repair in Model.Repairs)
+            {
+                <tr>
+                    <td class="text-nowrap">
+                        @repair.Date.ToString("dd.MM.yyyy")
+                    </td>
+                    <td class="text-break">@repair.Description</td>
+                    <td>@repair.TotalCost.ToString("F2")</td>
+                    <td>@repair.MileageKm</td>
+                    <td class="text-break">
+                        @(string.IsNullOrWhiteSpace(repair.ServiceCentre)
+                            ? "Не е посочен"
+                            : repair.ServiceCentre)
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Vehicles"
+       asp-action="Details"
+       asp-route-id="@Model.VehicleId"
+       class="btn btn-secondary">
+        Назад към автомобила
+    </a>
+</div>

@@ -182,3 +182,17 @@ a {
   border-radius: 16px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
 }
+body.fleet-app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  margin: 0;
+}
+
+body.fleet-app > .fleet-content {
+  flex: 1;
+}
+
+body.fleet-app > .fleet-footer {
+  margin-top: auto;
+}

@@ -163,7 +163,49 @@ dotnet run --project FleetLog/FleetLog.csproj --launch-profile https
 Then open:
 
 https://localhost:7103
+### Windows alternative: LocalDB and a separate EF tool
 
+This option requires SQL Server LocalDB to be installed.
+Run these commands in PowerShell from the repository root after restoring
+dependencies. Use this instead of the global EF tool and SQL-authentication
+connection steps above.
+
+Check and start the LocalDB instance:
+
+```powershell
+sqllocaldb info
+sqllocaldb start MSSQLLocalDB
+```
+
+Configure a separate test database using Windows authentication:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" 'Server=(localdb)\MSSQLLocalDB;Database=FleetLogInstallCheck;Trusted_Connection=True;TrustServerCertificate=True;' --project FleetLog/FleetLog.csproj
+```
+
+Clones of this project share the same User Secrets ID on the same user
+account. Setting this value replaces that account's existing connection
+setting for FleetLog.
+
+If another global EF tool version is installed, install version 8.0.31
+in a separate folder without changing the global tool:
+
+```powershell
+dotnet tool install dotnet-ef --version 8.0.31 --tool-path "$HOME\FleetLog-TestTools"
+```
+
+Run the installation command only once for this tools folder.
+
+Apply the migrations and start the application:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+& "$HOME\FleetLog-TestTools\dotnet-ef.exe" database update --project FleetLog/FleetLog.csproj --startup-project FleetLog/FleetLog.csproj
+dotnet run --project FleetLog/FleetLog.csproj --launch-profile http
+```
+
+Keep PowerShell running and open http://localhost:5185 in a browser
+on the same computer. Press Ctrl+C when you want to stop the application.
 ## Environment settings
 
 | Setting | Purpose |
@@ -206,7 +248,19 @@ The following flows have been checked during development:
 - Preventing deletion of vehicles with related records.
 - Navigation and layouts at wide and narrow screen sizes.
 
-A fresh-clone setup check using these README instructions remains to be completed.
+Installation was tested on a separate Windows laptop on 23 October 2026
+using a fresh clone and a new SQL Server LocalDB database.
+
+The test exposed a regional-settings issue when parsing decimal validation
+limits. This was fixed in commit `6772efd`, then pulled into the Windows
+clone without making local source edits.
+
+After the fix, vehicle creation, fuel and repair entry creation, decimal
+values, mileage updates and persistence after restarting were verified.
+The Windows working tree remained clean.
+
+The test used Windows authentication for LocalDB and a separate installation
+of EF Core CLI 8.0.31 alongside an existing global EF Core 10 tool.
 
 ## Current limitations
 
@@ -399,6 +453,51 @@ dotnet run --project FleetLog/FleetLog.csproj --launch-profile https
 
 https://localhost:7103
 
+#### Алтернатива за Windows: LocalDB и отделен EF инструмент
+
+Този вариант изисква инсталиран SQL Server LocalDB.
+Изпълнете командите в PowerShell от основната папка на хранилището
+след възстановяване на зависимостите. Използвайте този вариант вместо
+стъпките по-горе за глобален EF инструмент и връзка с SQL потребител и парола.
+
+Проверете и стартирайте LocalDB инстанцията:
+
+```powershell
+sqllocaldb info
+sqllocaldb start MSSQLLocalDB
+```
+
+Настройте отделна тестова база данни с Windows удостоверяване:
+
+```powershell
+dotnet user-secrets set "ConnectionStrings:DefaultConnection" 'Server=(localdb)\MSSQLLocalDB;Database=FleetLogInstallCheck;Trusted_Connection=True;TrustServerCertificate=True;' --project FleetLog/FleetLog.csproj
+```
+
+Клонираните копия на проекта използват един и същ User Secrets ID
+за един и същ потребителски акаунт. Задаването на тази стойност
+заменя съществуващата настройка за връзка на FleetLog за този акаунт.
+
+Ако е инсталирана друга глобална версия на EF инструмента,
+инсталирайте версия 8.0.31 в отделна папка:
+
+```powershell
+dotnet tool install dotnet-ef --version 8.0.31 --tool-path "$HOME\FleetLog-TestTools"
+```
+
+Изпълнете инсталационната команда само веднъж за тази папка.
+Глобалният EF инструмент остава непроменен.
+
+Приложете миграциите и стартирайте приложението:
+
+```powershell
+$env:ASPNETCORE_ENVIRONMENT = "Development"
+& "$HOME\FleetLog-TestTools\dotnet-ef.exe" database update --project FleetLog/FleetLog.csproj --startup-project FleetLog/FleetLog.csproj
+dotnet run --project FleetLog/FleetLog.csproj --launch-profile http
+```
+
+Оставете PowerShell да работи и отворете http://localhost:5185
+в браузър на същия компютър. За спиране на приложението натиснете Ctrl+C.
+
 ### Настройки на средата
 
 | Настройка | Предназначение |
@@ -445,8 +544,21 @@ FleetLog/
 - Забраната за изтриване на автомобили със свързани записи.
 - Навигацията и оформлението при широки и тесни екрани.
 
-Предстои проверка на инсталирането от ново клониране на хранилището,
-следвайки инструкциите в този README.
+Инсталирането е проверено на отделен Windows лаптоп на 23 октомври 2026 г.
+с ново клониране на хранилището и нова SQL Server LocalDB база данни.
+
+Тестът установи проблем с регионалните настройки при разчитане на
+десетичните граници за валидация. Той е отстранен с commit `6772efd`,
+след което поправката е изтеглена в Windows копието без локални
+промени по изходния код.
+
+След поправката са проверени създаването на автомобил, добавянето на
+зареждане и ремонт, десетичните стойности, обновяването на километража
+и запазването на данните след рестартиране. Работното копие в Windows
+остана без локални промени.
+
+Тестът използва Windows удостоверяване за LocalDB и отделна инсталация
+на EF Core CLI 8.0.31, наред със съществуващия глобален EF Core 10.
 
 ### Текущи ограничения
 

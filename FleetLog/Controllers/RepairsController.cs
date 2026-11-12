@@ -3,6 +3,7 @@ using FleetLog.Data.Models;
 using FleetLog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using FleetLog.Services;
 
 namespace FleetLog.Controllers;
 
@@ -91,7 +92,7 @@ public class RepairsController : Controller
         }
 
         if (model.MileageKm.HasValue &&
-            model.MileageKm.Value < vehicle.CurrentMileageKm)
+            !MileageRules.IsReadingValid(vehicle.CurrentMileageKm, model.MileageKm.Value))
         {
             ModelState.AddModelError(
                 nameof(model.MileageKm),

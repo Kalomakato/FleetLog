@@ -1,5 +1,4 @@
 using FleetLog.Data;
-using FleetLog.Data.Models;
 using FleetLog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +9,14 @@ namespace FleetLog.Controllers;
 public class FuelEntriesController : Controller
 {
     private readonly FleetLogDbContext _context;
+    private readonly FuelEntryService _fuelEntryService;
 
-    public FuelEntriesController(FleetLogDbContext context)
+    public FuelEntriesController(
+        FleetLogDbContext context,
+        FuelEntryService fuelEntryService)
     {
         _context = context;
+        _fuelEntryService = fuelEntryService;
     }
 
     [HttpGet]
@@ -77,49 +80,52 @@ public class FuelEntriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(FuelEntryCreateViewModel model)
     {
-        var vehicle = await _context.Vehicles
-            .FirstOrDefaultAsync(v =>v.Id == model.VehicleId);
+        if (ModelState.IsValid)
+        {
+            var result = await _fuelEntryService.CreateAsync(
+                vehicleId: model.VehicleId,
+                date: model.Date!.Value,
+                litres: model.Litres!.Value,
+                totalCost: model.TotalCost!.Value,
+                mileageKm: model.MileageKm!.Value);
 
-        if (vehicle == null)
+            if (!result.VehicleFound)
+            {
+                return NotFound();
+            }
+
+            if (result.FutureDate)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Date),
+                    "Датата не може да бъде в бъдещето.");
+            }
+
+            if (result.MileageTooLow)
+            {
+                ModelState.AddModelError(
+                    nameof(model.MileageKm),
+                    "Километражът не може да бъде по-малък от текущия.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(nameof(Index), new { vehicleId = model.VehicleId });
+            }
+        }
+
+        // Reload the registration number for the form heading.
+        var registrationNumber = await _context.Vehicles
+            .Where(v => v.Id == model.VehicleId)
+            .Select(v => v.RegistrationNumber)
+            .FirstOrDefaultAsync();
+
+        if (registrationNumber is null)
         {
             return NotFound();
         }
 
-        model.RegistrationNumber = vehicle.RegistrationNumber;
-
-        if (model.Date.HasValue && model.Date.Value.Date > DateTime.Today)
-        {
-            ModelState.AddModelError(
-                nameof(model.Date),
-                "Датата не може да бъде в бъдещето.");
-        }
-        if (model.MileageKm.HasValue &&
-            !MileageRules.IsReadingValid(vehicle.CurrentMileageKm, model.MileageKm.Value))
-        {
-            ModelState.AddModelError(
-                nameof(model.MileageKm),
-                "Километражът не може да бъде по-малък от текущия.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
-        var entry = new FuelEntry
-        {
-            VehicleId = vehicle.Id,
-            Date = model.Date!.Value.Date,
-            Litres = model.Litres!.Value,
-            TotalCost = model.TotalCost!.Value,
-            MileageKm = model.MileageKm!.Value
-        };
-
-        _context.FuelEntries.Add(entry);
-        vehicle.CurrentMileageKm = entry.MileageKm;
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index), new { vehicleId = vehicle.Id });
+        model.RegistrationNumber = registrationNumber;
+        return View(model);
     }
 }

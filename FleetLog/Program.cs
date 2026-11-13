@@ -1,6 +1,7 @@
 namespace FleetLog;
 using FleetLog.Data;
 using Microsoft.EntityFrameworkCore;
+using FleetLog.Services;
 
 public class Program
 {
@@ -10,6 +11,8 @@ public class Program
 
         // Add services to the container.
         builder.Services.AddControllersWithViews();
+        builder.Services.AddScoped<FuelEntryService>();
+        
         
         builder.Services.AddDbContext<FleetLogDbContext>(options =>
             options.UseSqlServer(

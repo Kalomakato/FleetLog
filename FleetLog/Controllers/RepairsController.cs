@@ -1,5 +1,4 @@
 using FleetLog.Data;
-using FleetLog.Data.Models;
 using FleetLog.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -10,10 +9,14 @@ namespace FleetLog.Controllers;
 public class RepairsController : Controller
 {
     private readonly FleetLogDbContext _context;
+    private readonly RepairService _repairService;
 
-    public RepairsController(FleetLogDbContext context)
+    public RepairsController(
+        FleetLogDbContext context,
+        RepairService repairService)
     {
         _context = context;
+        _repairService = repairService;
     }
     [HttpGet]
     public async Task<IActionResult> Index(int vehicleId)
@@ -74,53 +77,54 @@ public class RepairsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(RepairCreateViewModel model)
     {
-        var vehicle = await _context.Vehicles
-            .FirstOrDefaultAsync(v => v.Id == model.VehicleId);
+        if (ModelState.IsValid)
+        {
+            var result = await _repairService.CreateAsync(
+                vehicleId: model.VehicleId,
+                date: model.Date!.Value,
+                description: model.Description,
+                totalCost: model.TotalCost!.Value,
+                mileageKm: model.MileageKm!.Value,
+                serviceCentre: model.ServiceCentre);
 
-        if (vehicle == null)
+            if (!result.VehicleFound)
+            {
+                return NotFound();
+            }
+
+            if (result.FutureDate)
+            {
+                ModelState.AddModelError(
+                    nameof(model.Date),
+                    "Датата не може да бъде в бъдещето.");
+            }
+
+            if (result.MileageTooLow)
+            {
+                ModelState.AddModelError(
+                    nameof(model.MileageKm),
+                    "Километражът не може да бъде по-малък от текущия.");
+            }
+
+            if (ModelState.IsValid)
+            {
+                return RedirectToAction(
+                    nameof(Index),
+                    new { vehicleId = model.VehicleId });
+            }
+        }
+
+        var registrationNumber = await _context.Vehicles
+            .Where(v => v.Id == model.VehicleId)
+            .Select(v => v.RegistrationNumber)
+            .FirstOrDefaultAsync();
+
+        if (registrationNumber is null)
         {
             return NotFound();
         }
 
-        model.RegistrationNumber = vehicle.RegistrationNumber;
-
-        if (model.Date.HasValue && model.Date.Value.Date > DateTime.Today)
-        {
-            ModelState.AddModelError(
-                nameof(model.Date),
-                "Датата не може да бъде в бъдещето.");
-        }
-
-        if (model.MileageKm.HasValue &&
-            !MileageRules.IsReadingValid(vehicle.CurrentMileageKm, model.MileageKm.Value))
-        {
-            ModelState.AddModelError(
-                nameof(model.MileageKm),
-                "Километражът не може да бъде по-малък от текущия.");
-        }
-
-        if (!ModelState.IsValid)
-        {
-            return View(model);
-        }
-
-        var repair = new Repair
-        {
-            VehicleId = vehicle.Id,
-            Date = model.Date!.Value.Date,
-            Description = model.Description.Trim(),
-            TotalCost = model.TotalCost!.Value,
-            MileageKm = model.MileageKm!.Value,
-            ServiceCentre = string.IsNullOrWhiteSpace(model.ServiceCentre)
-                ? null
-                : model.ServiceCentre.Trim()
-        };
-
-        _context.Repairs.Add(repair);
-        vehicle.CurrentMileageKm = repair.MileageKm;
-
-        await _context.SaveChangesAsync();
-
-        return RedirectToAction(nameof(Index), new { vehicleId = vehicle.Id });
+        model.RegistrationNumber = registrationNumber;
+        return View(model);
     }
 }

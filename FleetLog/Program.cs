@@ -11,6 +11,8 @@ public class Program
         builder.Services.AddControllersWithViews();
         builder.Services.AddScoped<FuelEntryService>();
         builder.Services.AddScoped<RepairService>();
+        builder.Services.AddScoped<VehicleService>();
+
 
         builder.Services.AddDbContext<FleetLogDbContext>(options =>
             options.UseSqlServer(

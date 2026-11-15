@@ -2,6 +2,7 @@ using FleetLog.ViewModels;
 using Microsoft.EntityFrameworkCore;
 using FleetLog.Data;
 using FleetLog.Data.Models;
+using FleetLog.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
 
@@ -10,10 +11,14 @@ namespace FleetLog.Controllers;
 public class VehiclesController : Controller
 {
     private readonly FleetLogDbContext _context;
+    private readonly VehicleService _vehicleService;
 
-    public VehiclesController(FleetLogDbContext context)
+    public VehiclesController(
+        FleetLogDbContext context,
+        VehicleService vehicleService)
     {
         _context = context;
+        _vehicleService = vehicleService;
     }
 
     public async Task<IActionResult> Index()
@@ -223,13 +228,7 @@ public class VehiclesController : Controller
             Model = vehicle.Model
         };
 
-        var hasFuelEntries = await _context.FuelEntries
-            .AnyAsync(f => f.VehicleId == id);
-
-        var hasRepairs = await _context.Repairs
-            .AnyAsync(r => r.VehicleId == id);
-
-        if (hasFuelEntries || hasRepairs)
+        if (await _vehicleService.HasHistoryAsync(id))
         {
             ModelState.AddModelError(
                 string.Empty,
@@ -260,21 +259,19 @@ public class VehiclesController : Controller
         VehicleFormViewModel model,
         int? excludedVehicleId = null)
     {
-        var vehicles = _context.Vehicles.AsQueryable();
+        var result = await _vehicleService.CheckDuplicatesAsync(
+            model.RegistrationNumber,
+            model.VIN,
+            excludedVehicleId);
 
-        if (excludedVehicleId.HasValue)
-        {
-            vehicles = vehicles.Where(v => v.Id != excludedVehicleId.Value);
-        }
-
-        if (await vehicles.AnyAsync(v => v.RegistrationNumber == model.RegistrationNumber))
+        if (result.RegistrationExists)
         {
             ModelState.AddModelError(
                 nameof(model.RegistrationNumber),
                 "Вече съществува автомобил с този регистрационен номер.");
         }
 
-        if (await vehicles.AnyAsync(v => v.VIN == model.VIN))
+        if (result.VinExists)
         {
             ModelState.AddModelError(
                 nameof(model.VIN),

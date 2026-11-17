@@ -1,9 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using FleetLog.Data.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace FleetLog.Data;
 
-public class FleetLogDbContext : DbContext
+public class FleetLogDbContext : IdentityDbContext<IdentityUser>
 {
     public FleetLogDbContext(DbContextOptions<FleetLogDbContext> options)
         : base(options)

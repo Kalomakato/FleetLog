@@ -31,7 +31,7 @@
             </button>
 
             <div id="mainNavigation" class="collapse navbar-collapse">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-md-center">
                     <li class="nav-item">
                         <a class="nav-link"
                            asp-area=""
@@ -56,6 +56,45 @@
                             Поверителност
                         </a>
                     </li>
+
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <li class="nav-item">
+                            <span class="navbar-text d-block px-2">
+                                @User.Identity.Name
+                            </span>
+                        </li>
+                        <li class="nav-item">
+                            <form asp-area=""
+                                  asp-controller="Account"
+                                  asp-action="Logout"
+                                  method="post">
+                                <button type="submit"
+                                        class="nav-link border-0 bg-transparent">
+                                    Изход
+                                </button>
+                            </form>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Account"
+                               asp-action="Login">
+                                Вход
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Account"
+                               asp-action="Register">
+                                Регистрация
+                            </a>
+                        </li>
+                    }
                 </ul>
             </div>
         </div>

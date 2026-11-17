@@ -2,6 +2,7 @@ namespace FleetLog;
 using FleetLog.Data;
 using Microsoft.EntityFrameworkCore;
 using FleetLog.Services;
+using Microsoft.AspNetCore.Identity;
 
 public class Program
 {
@@ -18,6 +19,22 @@ public class Program
             options.UseSqlServer(
                 builder.Configuration.GetConnectionString("DefaultConnection")));
 
+        builder.Services
+            .AddIdentity<IdentityUser, IdentityRole>(options =>
+            {
+                options.User.RequireUniqueEmail = true;
+                options.Password.RequiredLength = 8;
+            })
+            .AddEntityFrameworkStores<FleetLogDbContext>()
+            .AddErrorDescriber<BulgarianIdentityErrorDescriber>()
+            .AddDefaultTokenProviders();
+
+        builder.Services.ConfigureApplicationCookie(options =>
+        {
+            options.LoginPath = "/Account/Login";
+            options.AccessDeniedPath = "/Account/AccessDenied";
+        });
+
         WebApplication app = builder.Build();
 
         if (!app.Environment.IsDevelopment())
@@ -32,6 +49,7 @@ public class Program
 
         app.UseRouting();
 
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.MapControllerRoute(

@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Identity;
 
 public class Program
 {
-    public static void Main(string[] args)
+    public static async Task Main(string[] args)
     {
         WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
         builder.Services.AddControllersWithViews();
@@ -37,6 +37,13 @@ public class Program
 
         WebApplication app = builder.Build();
 
+        await IdentitySeeder.SeedRolesAsync(app.Services);
+
+        await DevelopmentAdminSeeder.SeedAsync(
+            app.Services,
+            app.Configuration,
+            app.Environment);
+
         if (!app.Environment.IsDevelopment())
         {
             app.UseExceptionHandler("/Home/Error");
@@ -56,6 +63,6 @@ public class Program
             name: "default",
             pattern: "{controller=Home}/{action=Index}/{id?}");
 
-        app.Run();
+        await app.RunAsync();
     }
 }

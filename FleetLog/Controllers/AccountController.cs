@@ -2,7 +2,7 @@ using FleetLog.ViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-
+using FleetLog.Services;
 namespace FleetLog.Controllers;
 
 public class AccountController : Controller
@@ -53,6 +53,26 @@ public class AccountController : Controller
             {
                 ModelState.AddModelError(string.Empty, description);
             }
+
+            return View(model);
+        }
+
+        var roleResult = await _userManager.AddToRoleAsync(
+            user, RoleNames.User);
+
+        if (!roleResult.Succeeded)
+        {
+            var deleteResult = await _userManager.DeleteAsync(user);
+
+            if (!deleteResult.Succeeded)
+            {
+                throw new InvalidOperationException(
+                    "Could not remove the account after role assignment failed.");
+            }
+
+            ModelState.AddModelError(
+                string.Empty,
+                "Регистрацията не беше завършена. Опитайте отново.");
 
             return View(model);
         }

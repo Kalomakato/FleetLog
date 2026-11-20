@@ -22,6 +22,34 @@ namespace FleetLog.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+            modelBuilder.Entity("FleetLog.Data.Models.Driver", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("Drivers");
+                });
+
             modelBuilder.Entity("FleetLog.Data.Models.FuelEntry", b =>
                 {
                     b.Property<int>("Id")
@@ -140,6 +168,35 @@ namespace FleetLog.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Vehicles");
+                });
+
+            modelBuilder.Entity("FleetLog.Data.Models.VehicleAssignment", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DriverId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DriverId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("VehicleAssignments");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
@@ -340,6 +397,17 @@ namespace FleetLog.Data.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FleetLog.Data.Models.Driver", b =>
+                {
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", "User")
+                        .WithOne()
+                        .HasForeignKey("FleetLog.Data.Models.Driver", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("FleetLog.Data.Models.FuelEntry", b =>
                 {
                     b.HasOne("FleetLog.Data.Models.Vehicle", "Vehicle")
@@ -358,6 +426,25 @@ namespace FleetLog.Data.Migrations
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Vehicle");
+                });
+
+            modelBuilder.Entity("FleetLog.Data.Models.VehicleAssignment", b =>
+                {
+                    b.HasOne("FleetLog.Data.Models.Driver", "Driver")
+                        .WithMany("VehicleAssignments")
+                        .HasForeignKey("DriverId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("FleetLog.Data.Models.Vehicle", "Vehicle")
+                        .WithMany("VehicleAssignments")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Driver");
 
                     b.Navigation("Vehicle");
                 });
@@ -413,11 +500,18 @@ namespace FleetLog.Data.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("FleetLog.Data.Models.Driver", b =>
+                {
+                    b.Navigation("VehicleAssignments");
+                });
+
             modelBuilder.Entity("FleetLog.Data.Models.Vehicle", b =>
                 {
                     b.Navigation("FuelEntries");
 
                     b.Navigation("Repairs");
+
+                    b.Navigation("VehicleAssignments");
                 });
 #pragma warning restore 612, 618
         }

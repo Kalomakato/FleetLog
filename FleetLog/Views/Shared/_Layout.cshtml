@@ -56,7 +56,17 @@
                             Поверителност
                         </a>
                     </li>
-
+                    @if (User.IsInRole(FleetLog.Services.RoleNames.Administrator))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-area="Admin"
+                               asp-controller="Home"
+                               asp-action="Index">
+                                Администрация
+                            </a>
+                        </li>
+                    }
                     @if (User.Identity?.IsAuthenticated == true)
                     {
                         <li class="nav-item">

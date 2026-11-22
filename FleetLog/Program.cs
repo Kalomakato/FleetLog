@@ -13,6 +13,7 @@ public class Program
         builder.Services.AddScoped<FuelEntryService>();
         builder.Services.AddScoped<RepairService>();
         builder.Services.AddScoped<VehicleService>();
+        builder.Services.AddScoped<DriverService>();
 
 
         builder.Services.AddDbContext<FleetLogDbContext>(options =>

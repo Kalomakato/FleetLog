@@ -1,0 +1,64 @@
+@model FleetLog.ViewModels.DriverCreateViewModel
+
+@{
+    ViewData["Title"] = "Добавяне на шофьор";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+<h1>Добавяне на шофьор</h1>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+        <div class="fleet-form-panel">
+            @if (Model.AvailableUsers.Count == 0)
+            {
+                <p>
+                    Няма свободни потребителски профили.
+                    Необходим е регистриран профил, който още не е свързан с шофьор.
+                </p>
+            }
+
+            <form asp-area="Admin"
+                  asp-controller="Drivers"
+                  asp-action="Create"
+                  method="post">
+                <div asp-validation-summary="ModelOnly"
+                     class="text-danger"></div>
+
+                <div class="mb-3">
+                    <label asp-for="FullName" class="form-label"></label>
+                    <input asp-for="FullName" class="form-control" />
+                    <span asp-validation-for="FullName"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="UserId" class="form-label"></label>
+                    <select asp-for="UserId"
+                            asp-items="Model.AvailableUsers"
+                            class="form-select">
+                        <option value="">— Изберете профил —</option>
+                    </select>
+                    <span asp-validation-for="UserId"
+                          class="text-danger"></span>
+                </div>
+
+                <div class="d-flex flex-wrap gap-2 mt-4">
+                    <button type="submit" class="btn btn-primary">
+                        Запази
+                    </button>
+
+                    <a asp-area="Admin"
+                       asp-controller="Drivers"
+                       asp-action="Index"
+                       class="btn btn-secondary">
+                        Отказ
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="/Views/Shared/_ValidationScriptsPartial.cshtml" />
+}

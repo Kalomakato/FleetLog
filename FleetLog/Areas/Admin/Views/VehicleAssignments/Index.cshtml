@@ -1,0 +1,91 @@
+@model List<FleetLog.ViewModels.VehicleAssignmentListViewModel>
+
+@{
+    ViewData["Title"] = "Назначения на автомобили";
+    Layout = "/Views/Shared/_Layout.cshtml";
+    var today = DateTime.Today;
+}
+
+<div class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <h1>Назначения на автомобили</h1>
+
+    <a asp-area="Admin"
+       asp-controller="VehicleAssignments"
+       asp-action="Create"
+       class="btn btn-primary">
+        Назначаване на автомобил
+    </a>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="fleet-form-panel">
+        <p>Все още няма назначения на автомобили.</p>
+    </div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table align-middle">
+            <thead>
+                <tr>
+                    <th scope="col">Автомобил</th>
+                    <th scope="col">Шофьор</th>
+                    <th scope="col">Начална дата</th>
+                    <th scope="col">Крайна дата</th>
+                    <th scope="col">Статус</th>
+                    <th scope="col">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var assignment in Model)
+                {
+                    var status = assignment.StartDate.Date > today
+                        ? "Предстоящо"
+                        : assignment.EndDate.HasValue &&
+                          assignment.EndDate.Value.Date < today
+                            ? "Приключило"
+                            : "Активно";
+
+                    <tr>
+                        <td>@assignment.RegistrationNumber</td>
+                        <td>@assignment.DriverName</td>
+                        <td>@assignment.StartDate.ToString("dd.MM.yyyy")</td>
+                        <td>
+                            @(assignment.EndDate?.ToString("dd.MM.yyyy") ?? "Не е зададена")
+                        </td>
+                        <td>@status</td>
+                        <td>
+                            @if (!assignment.EndDate.HasValue)
+                            {
+                                <a asp-area="Admin"
+                                   asp-controller="VehicleAssignments"
+                                   asp-action="Release"
+                                   asp-route-id="@assignment.Id"
+                                   class="btn btn-secondary">
+                                    Освобождаване
+                                </a>
+                            }
+                            else
+                            {
+                                <span>Крайна дата е зададена</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+<p class="text-muted mt-3">
+    Крайната дата е включена в периода.
+    Автомобилът може да бъде назначен отново от следващия ден.
+</p>
+
+<a asp-area="Admin"
+   asp-controller="Home"
+   asp-action="Index"
+   class="btn btn-secondary">
+    Назад към администрацията
+</a>

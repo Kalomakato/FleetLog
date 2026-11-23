@@ -9,10 +9,19 @@
     <p>Добре дошли в административната част на FleetLog.</p>
     <p>Тази страница е достъпна само за администратори.</p>
 
-    <a asp-area="Admin"
-       asp-controller="Drivers"
-       asp-action="Index"
-       class="btn btn-primary">
-        Шофьори
-    </a>
+    <div class="d-flex flex-wrap gap-2">
+        <a asp-area="Admin"
+           asp-controller="Drivers"
+           asp-action="Index"
+           class="btn btn-primary">
+            Шофьори
+        </a>
+
+        <a asp-area="Admin"
+           asp-controller="VehicleAssignments"
+           asp-action="Index"
+           class="btn btn-primary">
+            Назначения на автомобили
+        </a>
+    </div>
 </div>

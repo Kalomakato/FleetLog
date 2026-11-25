@@ -15,6 +15,7 @@ public class Program
         builder.Services.AddScoped<VehicleService>();
         builder.Services.AddScoped<DriverService>();
         builder.Services.AddScoped<VehicleAssignmentService>();
+        builder.Services.AddScoped<DriverVehicleService>();
 
 
         builder.Services.AddDbContext<FleetLogDbContext>(options =>

@@ -1,0 +1,58 @@
+@model List<FleetLog.ViewModels.DriverVehicleViewModel>
+
+@{
+    ViewData["Title"] = "Моите автомобили";
+    Layout = "/Views/Shared/_Layout.cshtml";
+}
+
+<div class="fleet-page-header">
+    <div>
+        <h1>Моите автомобили</h1>
+        <p>Автомобили, назначени на вас към днешна дата.</p>
+    </div>
+</div>
+
+@if (Model.Count == 0)
+{
+    <div class="fleet-empty-state">
+        <h2>В момента нямате назначени автомобили.</h2>
+        <p>
+            Ако очаквате автомобил, свържете се с администратора.
+            Предстоящите назначения ще се появят на началната им дата.
+        </p>
+    </div>
+}
+else
+{
+    <div class="table-responsive fleet-table-panel">
+        <table class="table fleet-vehicles-table align-middle mb-0">
+            <thead class="text-nowrap">
+            <tr>
+                <th scope="col">Регистрационен номер</th>
+                <th scope="col">Марка</th>
+                <th scope="col">Модел</th>
+                <th scope="col">Километраж (км)</th>
+                <th scope="col">Начална дата</th>
+                <th scope="col">Крайна дата</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var vehicle in Model)
+            {
+                <tr>
+                    <td class="fw-semibold text-nowrap">
+                        @vehicle.RegistrationNumber
+                    </td>
+                    <td>@vehicle.Make</td>
+                    <td>@vehicle.Model</td>
+                    <td>@vehicle.CurrentMileageKm</td>
+                    <td>@vehicle.StartDate.ToString("dd.MM.yyyy")</td>
+                    <td>
+                        @(vehicle.EndDate?.ToString("dd.MM.yyyy") ?? "Не е зададена")
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+}

@@ -1,27 +1,37 @@
 using FleetLog.Data;
 using FleetLog.ViewModels;
+using FleetLog.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FleetLog.Services;
 
 namespace FleetLog.Controllers;
 
+[Authorize]
 public class FuelEntriesController : Controller
 {
     private readonly FleetLogDbContext _context;
     private readonly FuelEntryService _fuelEntryService;
+    private readonly VehicleAccessService _vehicleAccessService;
 
     public FuelEntriesController(
         FleetLogDbContext context,
-        FuelEntryService fuelEntryService)
+        FuelEntryService fuelEntryService,
+        VehicleAccessService vehicleAccessService)
     {
         _context = context;
         _fuelEntryService = fuelEntryService;
+        _vehicleAccessService = vehicleAccessService;
     }
 
     [HttpGet]
     public async Task<IActionResult> Index(int vehicleId)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, vehicleId))
+        {
+            return NotFound();
+        }
+
         var model = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == vehicleId)
@@ -58,6 +68,11 @@ public class FuelEntriesController : Controller
     [HttpGet]
     public async Task<IActionResult> Create(int vehicleId)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, vehicleId))
+        {
+            return NotFound();
+        }
+
         var model = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == vehicleId)
@@ -73,6 +88,7 @@ public class FuelEntriesController : Controller
         {
             return NotFound();
         }
+
         return View(model);
     }
 
@@ -80,6 +96,11 @@ public class FuelEntriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(FuelEntryCreateViewModel model)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, model.VehicleId))
+        {
+            return NotFound();
+        }
+
         if (ModelState.IsValid)
         {
             var result = await _fuelEntryService.CreateAsync(
@@ -110,12 +131,14 @@ public class FuelEntriesController : Controller
 
             if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index), new { vehicleId = model.VehicleId });
+                return RedirectToAction(
+                    nameof(Index),
+                    new { vehicleId = model.VehicleId });
             }
         }
 
-        // Reload the registration number for the form heading.
         var registrationNumber = await _context.Vehicles
+            .AsNoTracking()
             .Where(v => v.Id == model.VehicleId)
             .Select(v => v.RegistrationNumber)
             .FirstOrDefaultAsync();

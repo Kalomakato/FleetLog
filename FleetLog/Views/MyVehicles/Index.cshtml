@@ -41,7 +41,12 @@ else
             {
                 <tr>
                     <td class="fw-semibold text-nowrap">
-                        @vehicle.RegistrationNumber
+                        <a asp-area=""
+                           asp-controller="Vehicles"
+                           asp-action="Details"
+                           asp-route-id="@vehicle.VehicleId">
+                            @vehicle.RegistrationNumber
+                        </a>
                     </td>
                     <td>@vehicle.Make</td>
                     <td>@vehicle.Model</td>

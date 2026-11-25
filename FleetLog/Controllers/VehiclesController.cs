@@ -5,22 +5,29 @@ using FleetLog.Data.Models;
 using FleetLog.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Data.SqlClient;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FleetLog.Controllers;
 
+[Authorize]
 public class VehiclesController : Controller
 {
     private readonly FleetLogDbContext _context;
     private readonly VehicleService _vehicleService;
+    private readonly VehicleAccessService _vehicleAccessService;
 
     public VehiclesController(
         FleetLogDbContext context,
-        VehicleService vehicleService)
+        VehicleService vehicleService,
+        VehicleAccessService vehicleAccessService)
     {
         _context = context;
         _vehicleService = vehicleService;
+        _vehicleAccessService = vehicleAccessService;
     }
 
+    [HttpGet]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> Index()
     {
         var vehicles = await _context.Vehicles
@@ -38,12 +45,17 @@ public class VehiclesController : Controller
             })
             .ToListAsync();
 
-
         return View(vehicles);
     }
 
+    [HttpGet]
     public async Task<IActionResult> Details(int id)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, id))
+        {
+            return NotFound();
+        }
+
         var vehicle = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == id)
@@ -70,17 +82,18 @@ public class VehiclesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = RoleNames.Administrator)]
     public IActionResult Create()
     {
         return View(new VehicleCreateViewModel());
     }
 
-    // "model" clashes with the car's "Model" field.
-    // Empty prefix fixes the form values coming through empty.
-    // "Model" is the car model, like Corolla or Cayenne.
+    // Empty prefix avoids a clash with the vehicle's Model field.
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Create([Bind(Prefix = "")] VehicleCreateViewModel model)
+    [Authorize(Roles = RoleNames.Administrator)]
+    public async Task<IActionResult> Create(
+        [Bind(Prefix = "")] VehicleCreateViewModel model)
     {
         if (!ModelState.IsValid)
         {
@@ -113,6 +126,7 @@ public class VehiclesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> Edit(int id)
     {
         var vehicle = await _context.Vehicles
@@ -142,7 +156,9 @@ public class VehiclesController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Edit([Bind(Prefix = "")] VehicleEditViewModel model)
+    [Authorize(Roles = RoleNames.Administrator)]
+    public async Task<IActionResult> Edit(
+        [Bind(Prefix = "")] VehicleEditViewModel model)
     {
         var vehicle = await _context.Vehicles
             .FirstOrDefaultAsync(v => v.Id == model.Id);
@@ -186,6 +202,7 @@ public class VehiclesController : Controller
     }
 
     [HttpGet]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> Delete(int id)
     {
         var vehicle = await _context.Vehicles
@@ -196,7 +213,7 @@ public class VehiclesController : Controller
                 Id = v.Id,
                 RegistrationNumber = v.RegistrationNumber,
                 Make = v.Make,
-                Model = v.Model,
+                Model = v.Model
             })
             .FirstOrDefaultAsync();
 
@@ -210,6 +227,7 @@ public class VehiclesController : Controller
 
     [HttpPost, ActionName("Delete")]
     [ValidateAntiForgeryToken]
+    [Authorize(Roles = RoleNames.Administrator)]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
         var vehicle = await _context.Vehicles

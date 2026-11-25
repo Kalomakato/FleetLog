@@ -13,17 +13,47 @@
     </p>
 
     <div class="d-flex flex-wrap justify-content-center gap-3">
-        <a asp-controller="Vehicles"
-           asp-action="Index"
-           class="btn btn-primary">
-            Към автомобилите
-        </a>
+        @if (User.IsInRole(FleetLog.Services.RoleNames.Administrator))
+        {
+            <a asp-area=""
+               asp-controller="Vehicles"
+               asp-action="Index"
+               class="btn btn-primary">
+                Към автомобилите
+            </a>
 
-        <a asp-controller="Vehicles"
-           asp-action="Create"
-           class="btn btn-secondary">
-            Добавяне на автомобил
-        </a>
+            <a asp-area=""
+               asp-controller="Vehicles"
+               asp-action="Create"
+               class="btn btn-secondary">
+                Добавяне на автомобил
+            </a>
+        }
+        else if (User.Identity?.IsAuthenticated == true)
+        {
+            <a asp-area=""
+               asp-controller="MyVehicles"
+               asp-action="Index"
+               class="btn btn-primary">
+                Моите автомобили
+            </a>
+        }
+        else
+        {
+            <a asp-area=""
+               asp-controller="Account"
+               asp-action="Login"
+               class="btn btn-primary">
+                Вход
+            </a>
+
+            <a asp-area=""
+               asp-controller="Account"
+               asp-action="Register"
+               class="btn btn-secondary">
+                Регистрация
+            </a>
+        }
     </div>
 </section>
 

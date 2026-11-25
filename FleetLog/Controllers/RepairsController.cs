@@ -1,26 +1,37 @@
 using FleetLog.Data;
 using FleetLog.ViewModels;
+using FleetLog.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using FleetLog.Services;
 
 namespace FleetLog.Controllers;
 
+[Authorize]
 public class RepairsController : Controller
 {
     private readonly FleetLogDbContext _context;
     private readonly RepairService _repairService;
+    private readonly VehicleAccessService _vehicleAccessService;
 
     public RepairsController(
         FleetLogDbContext context,
-        RepairService repairService)
+        RepairService repairService,
+        VehicleAccessService vehicleAccessService)
     {
         _context = context;
         _repairService = repairService;
+        _vehicleAccessService = vehicleAccessService;
     }
+
     [HttpGet]
     public async Task<IActionResult> Index(int vehicleId)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, vehicleId))
+        {
+            return NotFound();
+        }
+
         var model = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == vehicleId)
@@ -51,12 +62,18 @@ public class RepairsController : Controller
                 ServiceCentre = r.ServiceCentre
             })
             .ToListAsync();
+
         return View(model);
     }
 
     [HttpGet]
     public async Task<IActionResult> Create(int vehicleId)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, vehicleId))
+        {
+            return NotFound();
+        }
+
         var model = await _context.Vehicles
             .AsNoTracking()
             .Where(v => v.Id == vehicleId)
@@ -67,16 +84,24 @@ public class RepairsController : Controller
                 MileageKm = v.CurrentMileageKm
             })
             .FirstOrDefaultAsync();
-        if (model==null)
+
+        if (model == null)
         {
             return NotFound();
         }
+
         return View(model);
     }
+
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(RepairCreateViewModel model)
     {
+        if (!await _vehicleAccessService.CanAccessAsync(User, model.VehicleId))
+        {
+            return NotFound();
+        }
+
         if (ModelState.IsValid)
         {
             var result = await _repairService.CreateAsync(
@@ -115,6 +140,7 @@ public class RepairsController : Controller
         }
 
         var registrationNumber = await _context.Vehicles
+            .AsNoTracking()
             .Where(v => v.Id == model.VehicleId)
             .Select(v => v.RegistrationNumber)
             .FirstOrDefaultAsync();

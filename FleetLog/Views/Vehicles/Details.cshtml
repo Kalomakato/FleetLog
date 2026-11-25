@@ -3,6 +3,7 @@
 
 @{
     ViewData["Title"] = "Детайли за автомобила";
+    var isAdministrator = User.IsInRole(FleetLog.Services.RoleNames.Administrator);
 }
 
 <div class="fleet-page-header">
@@ -11,7 +12,8 @@
         <p>@Model.Make @Model.Model — @Model.Year</p>
     </div>
 
-    <a asp-controller="Vehicles"
+    <a asp-area=""
+       asp-controller="@(isAdministrator ? "Vehicles" : "MyVehicles")"
        asp-action="Index"
        class="btn btn-secondary">
         Назад към автомобилите
@@ -59,32 +61,39 @@
     </dl>
 
     <div class="fleet-details-actions">
-        <a asp-controller="FuelEntries"
+        <a asp-area=""
+           asp-controller="FuelEntries"
            asp-action="Index"
            asp-route-vehicleId="@Model.Id"
            class="btn fleet-btn-fuel">
             Зареждания
         </a>
 
-        <a asp-controller="Repairs"
+        <a asp-area=""
+           asp-controller="Repairs"
            asp-action="Index"
            asp-route-vehicleId="@Model.Id"
            class="btn fleet-btn-repair">
             Ремонти
         </a>
 
-        <a asp-controller="Vehicles"
-           asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn fleet-btn-edit">
-            Редактиране
-        </a>
+        @if (isAdministrator)
+        {
+            <a asp-area=""
+               asp-controller="Vehicles"
+               asp-action="Edit"
+               asp-route-id="@Model.Id"
+               class="btn fleet-btn-edit">
+                Редактиране
+            </a>
 
-        <a asp-controller="Vehicles"
-           asp-action="Delete"
-           asp-route-id="@Model.Id"
-           class="btn btn-outline-danger">
-            Изтриване
-        </a>
+            <a asp-area=""
+               asp-controller="Vehicles"
+               asp-action="Delete"
+               asp-route-id="@Model.Id"
+               class="btn btn-outline-danger">
+                Изтриване
+            </a>
+        }
     </div>
 </div>

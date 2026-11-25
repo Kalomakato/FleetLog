@@ -40,14 +40,17 @@
                             Начало
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link"
-                           asp-area=""
-                           asp-controller="Vehicles"
-                           asp-action="Index">
-                            Автомобили
-                        </a>
-                    </li>
+                    @if (User.IsInRole(FleetLog.Services.RoleNames.Administrator))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"
+                               asp-area=""
+                               asp-controller="Vehicles"
+                               asp-action="Index">
+                                Автомобили
+                            </a>
+                        </li>
+                    }
                     <li class="nav-item">
                         <a class="nav-link"
                            asp-area=""

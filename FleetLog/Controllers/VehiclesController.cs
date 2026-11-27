@@ -28,24 +28,12 @@ public class VehiclesController : Controller
 
     [HttpGet]
     [Authorize(Roles = RoleNames.Administrator)]
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(
+        string? search,
+        int pageNumber = 1)
     {
-        var vehicles = await _context.Vehicles
-            .AsNoTracking()
-            .OrderBy(v => v.RegistrationNumber)
-            .Select(v => new VehicleListViewModel
-            {
-                Id = v.Id,
-                RegistrationNumber = v.RegistrationNumber,
-                Make = v.Make,
-                Model = v.Model,
-                Year = v.Year,
-                CurrentMileageKm = v.CurrentMileageKm,
-                IsActive = v.IsActive
-            })
-            .ToListAsync();
-
-        return View(vehicles);
+        var model = await _vehicleService.GetPageAsync(search, pageNumber);
+        return View(model);
     }
 
     [HttpGet]

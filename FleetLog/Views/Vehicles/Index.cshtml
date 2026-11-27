@@ -1,4 +1,4 @@
-@model IEnumerable<FleetLog.ViewModels.VehicleListViewModel>
+@model FleetLog.ViewModels.VehicleIndexViewModel
 
 @{
     ViewData["Title"] = "Автомобили";
@@ -10,22 +10,69 @@
         <p>Данни, зареждания и ремонти за вашите автомобили.</p>
     </div>
 
-    <a asp-controller="Vehicles"
+    <a asp-area=""
+       asp-controller="Vehicles"
        asp-action="Create"
        class="btn btn-primary">
         Добавяне на автомобил
     </a>
 </div>
 
-@if (!Model.Any())
+<form asp-area=""
+      asp-controller="Vehicles"
+      asp-action="Index"
+      method="get"
+      class="mb-4">
+    <label for="vehicleSearch" class="form-label">
+        Търсене по регистрационен номер
+    </label>
+
+    <div class="d-flex flex-wrap gap-2">
+        <input id="vehicleSearch"
+               name="search"
+               value="@Model.Search"
+               type="search"
+               class="form-control w-auto flex-grow-1"
+               placeholder="Например: CB1234" />
+
+        <button type="submit" class="btn btn-primary">
+            Търси
+        </button>
+
+        <a asp-area=""
+           asp-controller="Vehicles"
+           asp-action="Index"
+           class="btn btn-secondary">
+            Изчисти
+        </a>
+    </div>
+</form>
+
+@if (Model.Vehicles.Count == 0)
 {
     <div class="fleet-empty-state">
-        <h2>Все още няма добавени автомобили.</h2>
-        <p>Добавете първия си автомобил чрез бутона по-горе.</p>
+        @if (!string.IsNullOrWhiteSpace(Model.Search))
+        {
+            <h2>Няма намерени автомобили.</h2>
+            <p>
+                Няма регистрационни номера, съдържащи „@Model.Search“.
+                Опитайте друго търсене или изчистете филтъра.
+            </p>
+        }
+        else
+        {
+            <h2>Все още няма добавени автомобили.</h2>
+            <p>Добавете първия си автомобил чрез бутона по-горе.</p>
+        }
     </div>
 }
 else
 {
+    <p class="text-muted">
+        Намерени автомобили: @Model.TotalCount.
+        Страница @Model.PageNumber от @Model.TotalPages.
+    </p>
+
     <div class="table-responsive fleet-table-panel">
         <table class="table fleet-vehicles-table align-middle mb-0">
             <thead class="text-nowrap">
@@ -40,7 +87,7 @@ else
                 </tr>
             </thead>
             <tbody>
-                @foreach (var vehicle in Model)
+                @foreach (var vehicle in Model.Vehicles)
                 {
                     <tr>
                         <td class="fw-semibold text-nowrap">
@@ -57,35 +104,40 @@ else
                         </td>
                         <td>
                             <div class="fleet-row-actions">
-                                <a asp-controller="Vehicles"
+                                <a asp-area=""
+                                   asp-controller="Vehicles"
                                    asp-action="Details"
                                    asp-route-id="@vehicle.Id"
                                    class="btn btn-outline-primary btn-sm">
                                     Детайли
                                 </a>
 
-                                <a asp-controller="FuelEntries"
+                                <a asp-area=""
+                                   asp-controller="FuelEntries"
                                    asp-action="Index"
                                    asp-route-vehicleId="@vehicle.Id"
                                    class="btn fleet-btn-fuel btn-sm">
                                     Зареждания
                                 </a>
 
-                                <a asp-controller="Repairs"
+                                <a asp-area=""
+                                   asp-controller="Repairs"
                                    asp-action="Index"
                                    asp-route-vehicleId="@vehicle.Id"
                                    class="btn fleet-btn-repair btn-sm">
                                     Ремонти
                                 </a>
 
-                                <a asp-controller="Vehicles"
+                                <a asp-area=""
+                                   asp-controller="Vehicles"
                                    asp-action="Edit"
                                    asp-route-id="@vehicle.Id"
                                    class="btn fleet-btn-edit btn-sm">
                                     Редактиране
                                 </a>
 
-                                <a asp-controller="Vehicles"
+                                <a asp-area=""
+                                   asp-controller="Vehicles"
                                    asp-action="Delete"
                                    asp-route-id="@vehicle.Id"
                                    class="btn btn-outline-danger btn-sm">
@@ -98,4 +150,57 @@ else
             </tbody>
         </table>
     </div>
+
+    @if (Model.TotalPages > 1)
+    {
+        <nav class="mt-4" aria-label="Страници с автомобили">
+            <ul class="pagination flex-wrap">
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    @if (Model.HasPreviousPage)
+                    {
+                        <a class="page-link"
+                           asp-area=""
+                           asp-controller="Vehicles"
+                           asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.PageNumber - 1)">
+                            Предишна
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link" aria-disabled="true">
+                            Предишна
+                        </span>
+                    }
+                </li>
+
+                <li class="page-item active">
+                    <span class="page-link" aria-current="page">
+                        @Model.PageNumber / @Model.TotalPages
+                    </span>
+                </li>
+
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    @if (Model.HasNextPage)
+                    {
+                        <a class="page-link"
+                           asp-area=""
+                           asp-controller="Vehicles"
+                           asp-action="Index"
+                           asp-route-search="@Model.Search"
+                           asp-route-pageNumber="@(Model.PageNumber + 1)">
+                            Следваща
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="page-link" aria-disabled="true">
+                            Следваща
+                        </span>
+                    }
+                </li>
+            </ul>
+        </nav>
+    }
 }
